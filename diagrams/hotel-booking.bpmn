@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="Definitions_HotelBooking" targetNamespace="http://example.com/hotel-booking">
+  <bpmn:process id="Process_HotelBooking" name="Бронирование отеля" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_Search" name="Пользователь начал поиск"/>
+    <bpmn:task id="Task_EnterCriteria" name="Указать направление, даты и гостей"/>
+    <bpmn:task id="Task_SearchHotels" name="Найти доступные отели"/>
+    <bpmn:exclusiveGateway id="Gateway_HotelsFound" name="Есть доступные варианты?"/>
+    <bpmn:task id="Task_ShowNoHotels" name="Сообщить, что вариантов нет"/>
+    <bpmn:endEvent id="EndEvent_NoHotels" name="Поиск завершён без результата"/>
+    <bpmn:task id="Task_SelectHotel" name="Выбрать отель и номер"/>
+    <bpmn:task id="Task_ShowConditions" name="Показать стоимость и условия"/>
+    <bpmn:task id="Task_EnterGuestData" name="Ввести данные гостя"/>
+    <bpmn:task id="Task_CheckAvailability" name="Повторно проверить доступность номера"/>
+    <bpmn:exclusiveGateway id="Gateway_RoomAvailable" name="Номер доступен?"/>
+    <bpmn:task id="Task_OfferAlternative" name="Предложить выбрать другой номер"/>
+    <bpmn:task id="Task_Payment" name="Выполнить оплату"/>
+    <bpmn:exclusiveGateway id="Gateway_PaymentSuccess" name="Оплата прошла?"/>
+    <bpmn:task id="Task_PaymentError" name="Сообщить об ошибке оплаты"/>
+    <bpmn:endEvent id="EndEvent_PaymentFailed" name="Бронирование не подтверждено"/>
+    <bpmn:task id="Task_CreateBooking" name="Создать бронирование"/>
+    <bpmn:task id="Task_SendConfirmation" name="Отправить подтверждение пользователю"/>
+    <bpmn:endEvent id="EndEvent_Success" name="Бронирование подтверждено"/>
+
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_Search" targetRef="Task_EnterCriteria"/>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_EnterCriteria" targetRef="Task_SearchHotels"/>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_SearchHotels" targetRef="Gateway_HotelsFound"/>
+    <bpmn:sequenceFlow id="Flow_4_yes" name="Да" sourceRef="Gateway_HotelsFound" targetRef="Task_SelectHotel"/>
+    <bpmn:sequenceFlow id="Flow_4_no" name="Нет" sourceRef="Gateway_HotelsFound" targetRef="Task_ShowNoHotels"/>
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_ShowNoHotels" targetRef="EndEvent_NoHotels"/>
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_SelectHotel" targetRef="Task_ShowConditions"/>
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="Task_ShowConditions" targetRef="Task_EnterGuestData"/>
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="Task_EnterGuestData" targetRef="Task_CheckAvailability"/>
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="Task_CheckAvailability" targetRef="Gateway_RoomAvailable"/>
+    <bpmn:sequenceFlow id="Flow_10_yes" name="Да" sourceRef="Gateway_RoomAvailable" targetRef="Task_Payment"/>
+    <bpmn:sequenceFlow id="Flow_10_no" name="Нет" sourceRef="Gateway_RoomAvailable" targetRef="Task_OfferAlternative"/>
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_OfferAlternative" targetRef="Task_SelectHotel"/>
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_Payment" targetRef="Gateway_PaymentSuccess"/>
+    <bpmn:sequenceFlow id="Flow_13_yes" name="Да" sourceRef="Gateway_PaymentSuccess" targetRef="Task_CreateBooking"/>
+    <bpmn:sequenceFlow id="Flow_13_no" name="Нет" sourceRef="Gateway_PaymentSuccess" targetRef="Task_PaymentError"/>
+    <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_PaymentError" targetRef="EndEvent_PaymentFailed"/>
+    <bpmn:sequenceFlow id="Flow_15" sourceRef="Task_CreateBooking" targetRef="Task_SendConfirmation"/>
+    <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_SendConfirmation" targetRef="EndEvent_Success"/>
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_HotelBooking">
+    <bpmndi:BPMNPlane id="BPMNPlane_HotelBooking" bpmnElement="Process_HotelBooking">
+      <bpmndi:BPMNShape id="Shape_StartEvent_Search" bpmnElement="StartEvent_Search"><dc:Bounds x="80" y="180" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_EnterCriteria" bpmnElement="Task_EnterCriteria"><dc:Bounds x="150" y="160" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_SearchHotels" bpmnElement="Task_SearchHotels"><dc:Bounds x="320" y="160" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_HotelsFound" bpmnElement="Gateway_HotelsFound" isMarkerVisible="true"><dc:Bounds x="490" y="175" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_ShowNoHotels" bpmnElement="Task_ShowNoHotels"><dc:Bounds x="570" y="300" width="140" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_EndEvent_NoHotels" bpmnElement="EndEvent_NoHotels"><dc:Bounds x="750" y="322" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_SelectHotel" bpmnElement="Task_SelectHotel"><dc:Bounds x="580" y="160" width="140" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_ShowConditions" bpmnElement="Task_ShowConditions"><dc:Bounds x="760" y="160" width="140" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_EnterGuestData" bpmnElement="Task_EnterGuestData"><dc:Bounds x="940" y="160" width="140" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_CheckAvailability" bpmnElement="Task_CheckAvailability"><dc:Bounds x="1120" y="160" width="150" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_RoomAvailable" bpmnElement="Gateway_RoomAvailable" isMarkerVisible="true"><dc:Bounds x="1310" y="175" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_OfferAlternative" bpmnElement="Task_OfferAlternative"><dc:Bounds x="1270" y="300" width="150" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Payment" bpmnElement="Task_Payment"><dc:Bounds x="1400" y="160" width="130" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_PaymentSuccess" bpmnElement="Gateway_PaymentSuccess" isMarkerVisible="true"><dc:Bounds x="1570" y="175" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_PaymentError" bpmnElement="Task_PaymentError"><dc:Bounds x="1640" y="300" width="140" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_EndEvent_PaymentFailed" bpmnElement="EndEvent_PaymentFailed"><dc:Bounds x="1820" y="322" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_CreateBooking" bpmnElement="Task_CreateBooking"><dc:Bounds x="1650" y="160" width="140" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_SendConfirmation" bpmnElement="Task_SendConfirmation"><dc:Bounds x="1830" y="160" width="150" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_EndEvent_Success" bpmnElement="EndEvent_Success"><dc:Bounds x="2020" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="Edge_Flow_1" bpmnElement="Flow_1"><di:waypoint x="116" y="198"/><di:waypoint x="150" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_2" bpmnElement="Flow_2"><di:waypoint x="280" y="200"/><di:waypoint x="320" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_3" bpmnElement="Flow_3"><di:waypoint x="450" y="200"/><di:waypoint x="490" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_4_yes" bpmnElement="Flow_4_yes"><di:waypoint x="540" y="200"/><di:waypoint x="580" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_4_no" bpmnElement="Flow_4_no"><di:waypoint x="515" y="225"/><di:waypoint x="515" y="340"/><di:waypoint x="570" y="340"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_5" bpmnElement="Flow_5"><di:waypoint x="710" y="340"/><di:waypoint x="750" y="340"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_6" bpmnElement="Flow_6"><di:waypoint x="720" y="200"/><di:waypoint x="760" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_7" bpmnElement="Flow_7"><di:waypoint x="900" y="200"/><di:waypoint x="940" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_8" bpmnElement="Flow_8"><di:waypoint x="1080" y="200"/><di:waypoint x="1120" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_9" bpmnElement="Flow_9"><di:waypoint x="1270" y="200"/><di:waypoint x="1310" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_10_yes" bpmnElement="Flow_10_yes"><di:waypoint x="1360" y="200"/><di:waypoint x="1400" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_10_no" bpmnElement="Flow_10_no"><di:waypoint x="1335" y="225"/><di:waypoint x="1335" y="300"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_11" bpmnElement="Flow_11"><di:waypoint x="1270" y="340"/><di:waypoint x="1210" y="340"/><di:waypoint x="1210" y="260"/><di:waypoint x="650" y="260"/><di:waypoint x="650" y="240"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_12" bpmnElement="Flow_12"><di:waypoint x="1530" y="200"/><di:waypoint x="1570" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_13_yes" bpmnElement="Flow_13_yes"><di:waypoint x="1620" y="200"/><di:waypoint x="1650" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_13_no" bpmnElement="Flow_13_no"><di:waypoint x="1595" y="225"/><di:waypoint x="1595" y="340"/><di:waypoint x="1640" y="340"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_14" bpmnElement="Flow_14"><di:waypoint x="1780" y="340"/><di:waypoint x="1820" y="340"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_15" bpmnElement="Flow_15"><di:waypoint x="1790" y="200"/><di:waypoint x="1830" y="200"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_16" bpmnElement="Flow_16"><di:waypoint x="1980" y="200"/><di:waypoint x="2020" y="200"/></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
