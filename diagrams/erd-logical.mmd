@@ -1,0 +1,132 @@
+erDiagram
+    TOUR_OPERATOR ||--o{ CUSTOMER_ORDER : "обрабатывает"
+    CLIENT ||--o{ CUSTOMER_ORDER : "оформляет"
+    CLIENT ||--o{ TRAVELER : "добавляет"
+    CUSTOMER_ORDER ||--o{ PAYMENT : "оплачивается"
+
+    COUNTRY ||--o{ CITY : "содержит"
+    CITY ||--o{ HOTEL : "расположен в"
+    HOTEL ||--|{ ROOM_TYPE : "имеет типы номеров"
+    ROOM_TYPE ||--|{ HOTEL_ROOM : "включает номера"
+    HOTEL_ROOM ||--o{ HOTEL_BOOKING : "бронируется"
+    CUSTOMER_ORDER ||--o{ HOTEL_BOOKING : "содержит"
+    HOTEL_BOOKING ||--|{ HOTEL_BOOKING_GUEST : "включает гостей"
+    TRAVELER ||--o{ HOTEL_BOOKING_GUEST : "проживает"
+
+    TRANSPORT_COMPANY ||--o{ TRANSPORT_TRIP : "выполняет"
+    CITY ||--o{ TRANSPORT_TRIP : "город отправления"
+    CITY ||--o{ TRANSPORT_TRIP : "город прибытия"
+    TRANSPORT_TRIP ||--o{ TICKET : "на рейс или рейс-поездку"
+    TRAVELER ||--o{ TICKET : "пассажир"
+    CUSTOMER_ORDER ||--o{ TICKET : "содержит"
+
+    TOUR_OPERATOR {
+        int operator_id PK
+        string name
+        string email
+        string phone
+    }
+    CLIENT {
+        int client_id PK
+        string full_name
+        string email
+        string phone
+        string password_hash
+        datetime created_at
+    }
+    TRAVELER {
+        int traveler_id PK
+        int client_id FK
+        string first_name
+        string last_name
+        date birth_date
+        string document_number
+    }
+    CUSTOMER_ORDER {
+        int order_id PK
+        int client_id FK
+        int operator_id FK
+        datetime created_at
+        string status
+        decimal total_amount
+        string currency
+    }
+    PAYMENT {
+        int payment_id PK
+        int order_id FK
+        decimal amount
+        string payment_method
+        string status
+        datetime paid_at
+        string transaction_id
+    }
+    COUNTRY {
+        int country_id PK
+        string name
+    }
+    CITY {
+        int city_id PK
+        int country_id FK
+        string name
+    }
+    HOTEL {
+        int hotel_id PK
+        int city_id FK
+        string name
+        string address
+        int stars
+        string description
+    }
+    ROOM_TYPE {
+        int room_type_id PK
+        int hotel_id FK
+        string name
+        int capacity
+        string description
+    }
+    HOTEL_ROOM {
+        int room_id PK
+        int room_type_id FK
+        string room_number
+        string status
+    }
+    HOTEL_BOOKING {
+        int hotel_booking_id PK
+        int order_id FK
+        int room_id FK
+        date check_in
+        date check_out
+        int guests_count
+        decimal total_price
+        string status
+    }
+    HOTEL_BOOKING_GUEST {
+        int hotel_booking_id PK, FK
+        int traveler_id PK, FK
+    }
+    TRANSPORT_COMPANY {
+        int company_id PK
+        string name
+        string phone
+        string email
+    }
+    TRANSPORT_TRIP {
+        int trip_id PK
+        int company_id FK
+        int origin_city_id FK
+        int destination_city_id FK
+        string transport_type
+        string route_number
+        datetime departure_at
+        datetime arrival_at
+    }
+    TICKET {
+        int ticket_id PK
+        int order_id FK
+        int trip_id FK
+        int traveler_id FK
+        string seat_number
+        string service_class
+        decimal price
+        string status
+    }
